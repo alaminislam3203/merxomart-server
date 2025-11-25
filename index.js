@@ -20,7 +20,6 @@ const client = new MongoClient(uri, {
   },
 });
 
-// Database and collection
 let productsCollection;
 
 async function connectDB() {
@@ -35,8 +34,6 @@ async function connectDB() {
 }
 
 connectDB();
-
-// Routes
 
 // GET all products
 app.get('/api/products', async (req, res) => {
@@ -66,7 +63,6 @@ app.post('/api/products', async (req, res) => {
       price,
       imgSrc,
     };
-
     const result = await productsCollection.insertOne(newProduct);
 
     res.status(201).json({
