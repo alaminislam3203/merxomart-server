@@ -1,7 +1,8 @@
+require('dotenv').config({ path: '.env.local' }); // Load .env.local
+
 const express = require('express');
 const cors = require('cors');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
-require('dotenv').config();
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -10,8 +11,9 @@ const port = process.env.PORT || 4000;
 app.use(cors());
 app.use(express.json());
 
-// MongoDB setup using .env
+// MongoDB URI from .env.local
 const uri = process.env.MONGO_URI;
+
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -22,30 +24,32 @@ const client = new MongoClient(uri, {
 
 let productsCollection;
 
+// Connect Database
 async function connectDB() {
   try {
     await client.connect();
-    console.log('MongoDB connected successfully!');
+    console.log(' MongoDB connected successfully');
+
     const db = client.db('merxomart');
     productsCollection = db.collection('products');
-  } catch (err) {
-    console.error('MongoDB connection error:', err);
+  } catch (error) {
+    console.error('❌ MongoDB connection error:', error);
   }
 }
 
 connectDB();
 
-// GET all products
+// === GET All Products ===
 app.get('/api/products', async (req, res) => {
   try {
     const products = await productsCollection.find({}).toArray();
     res.status(200).json(products);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 });
 
-// POST new product
+// === POST: Add New Product ===
 app.post('/api/products', async (req, res) => {
   try {
     const { name, description, descriptionDetail, rating, price, imgSrc } =
@@ -63,18 +67,19 @@ app.post('/api/products', async (req, res) => {
       price,
       imgSrc,
     };
+
     const result = await productsCollection.insertOne(newProduct);
 
     res.status(201).json({
       message: 'Product added successfully',
       product: { _id: result.insertedId, ...newProduct },
     });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 });
 
-// DELETE a product by _id
+// === DELETE product by _id ===
 app.delete('/api/products/:id', async (req, res) => {
   try {
     const id = req.params.id;
@@ -88,17 +93,17 @@ app.delete('/api/products/:id', async (req, res) => {
     }
 
     res.status(200).json({ message: 'Product deleted successfully' });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 });
 
-// Root route
+// === Root Route ===
 app.get('/', (req, res) => {
-  res.send('Merxomart Server is running');
+  res.send('Merxomart Server is Running...');
 });
 
-// Start server
+// === Start Server ===
 app.listen(port, () => {
-  console.log(`Merxomart Server running on port ${port}`);
+  console.log(` Merxomart server running on port ${port}`);
 });
