@@ -1,4 +1,4 @@
-require('dotenv').config({ path: '.env.local' }); // Load .env.local
+require('dotenv').config({ path: '.env.local' });
 
 const express = require('express');
 const cors = require('cors');
@@ -27,13 +27,13 @@ let productsCollection;
 // Connect Database
 async function connectDB() {
   try {
-    await client.connect();
+    // await client.connect();
     console.log(' MongoDB connected successfully');
 
     const db = client.db('merxomart');
     productsCollection = db.collection('products');
   } catch (error) {
-    console.error('❌ MongoDB connection error:', error);
+    console.error(' MongoDB connection error:', error);
   }
 }
 
