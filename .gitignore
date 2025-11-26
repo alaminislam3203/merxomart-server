@@ -1,10 +1,9 @@
-# Environment variables
+node_modules
 .env
 .env.local
 .env.*.local
 
-# Node modules
-node_modules/
+
 
 # Vercel build/output
 .vercel/
